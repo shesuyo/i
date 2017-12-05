@@ -1,0 +1,33 @@
+方法一：直接使用DATE_FORMAT
+SELECT COUNT(*),categoryid,`status` FROM report WHERE DATE_FORMAT(created,"%Y-%m") = '2017-05' GROUP BY categoryid,`status`
+时间: 0.194s
+时间: 0.122s(datetime)
+34440条
+
+方法二：使用 >= 和 <= 取代 DATE_FORMAT
+SELECT * FROM report WHERE created >= '2017-05-01 00:00:00' AND created <= '2017-05-31 23:59:59'
+34440条
+SELECT COUNT(*),categoryid,`status` FROM report WHERE created >= '2017-05-01 00:00:00' AND created <= '2017-05-31 23:59:59' GROUP BY categoryid,`status`
+时间: 0.213s
+时间: 0.042s(datetime)
+
+第三种方法使用id来划分。
+SELECT * FROM report WHERE id >= 160855 AND id <= 195293
+需要做索引的是最快的
+SELECT COUNT(*),categoryid,`status` FROM report WHERE id >= 160855 AND id <= 195293 GROUP BY categoryid,`status`
+0.022s
+
+mysql时间类型无法索引
+
+你对这个字段进行了运算，无法使用索引，查询某月，可以使用
+where WorkDate  between 'YYYY-MM-01' and 'YYYY-MM-31'
+
+第四种方法：
+SELECT COUNT(*),categoryid,`status` FROM report WHERE created BETWEEN '2017-05-01' AND '2017-05-31' GROUP BY categoryid,`status`
+时间: 0.245s
+时间: 0.040s（datetime）
+
+第五种方法：左边不能有%，这样才可以使用索引。
+SELECT COUNT(*),categoryid,`status` FROM report WHERE created LIKE '2017-05%'  GROUP BY categoryid,`status`
+将timestamp转换成datetime之后
+时间: 0.098s
