@@ -31,3 +31,8 @@ SELECT COUNT(*),categoryid,`status` FROM report WHERE created BETWEEN '2017-05-0
 SELECT COUNT(*),categoryid,`status` FROM report WHERE created LIKE '2017-05%'  GROUP BY categoryid,`status`
 将timestamp转换成datetime之后
 时间: 0.098s
+
+
+之前想到使用索引记录每一天的id area，然后再通过 id来进行天与天之间的过滤。
+后来干脆舍弃一点点性能，只能查找这个id。
+查找天`（是否是过去的天?(缓存是否命中?读缓存:写缓存):直接找）`
